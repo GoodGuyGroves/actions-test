@@ -1,5 +1,6 @@
 ---
-title: Hurr
-labels: deployment
+title: Someone just pushed
+assignees: GoodGuyGroves
+labels: bug, enhancement
 ---
-The workflow, `tools.context.workflow`, was just triggered by {{ env.OWNER }}.
+Someone just pushed, oh no! Here's who did it: {{ payload.sender.login }}.
