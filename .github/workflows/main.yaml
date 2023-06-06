@@ -45,10 +45,8 @@ jobs:
         # secrets.GITHUB_TOKEN is populated with a new token at the start of a workflows run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OWNER: ${{ github.actor }}
         with:
           filename: .github/deploy_issue_template.md
-          # assignees: ${{ github.actor }}
           update_existing: false
           search_existing: open
 
