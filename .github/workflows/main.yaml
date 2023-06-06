@@ -47,7 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           update_existing: false
-          search_existing: open
 
   close-issue:
     name: Close Issue
