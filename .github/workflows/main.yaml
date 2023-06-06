@@ -46,6 +46,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.actor }}
+          WORKFLOW: ${{ github.workflow }}
         with:
           filename: .github/deploy_issue_template.md
           assignees: ${{ github.actor }}
@@ -58,6 +59,7 @@ jobs:
     # Only if the deployment was a success, should we then close the issue
     if: ${{ success() }}
     steps:
+      - uses: actions/checkout@v3
       - run: gh issue close --comment "Deployment successful." --reason "completed" "${{ needs.open-issue.outputs.issue-number }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,5 @@
 ---
-title: '{{ tools.context.workflow }} | {{ date | date("dddd, MMMM Do") }}'
+title: '{{ env.WORKFLOW }} | {{ date | date("dddd, MMMM Do") }}'
 labels: deployment
 ---
-The workflow, `{{ tools.context.workflow }}`, was just triggered by {{ env.OWNER }}.
+The workflow, `{{ env.WORKFLOW }}`, was just triggered by {{ env.OWNER }}.
