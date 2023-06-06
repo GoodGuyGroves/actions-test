@@ -38,9 +38,18 @@ jobs:
       issue-number: ${{ steps.open-issue.outputs.number }}
     steps:
       - uses: actions/checkout@v3
-      - uses: JasonEtco/create-an-issue@v2
+      # Using this action allows us to make use of an issue template
+      - id: open-issue
+        uses: JasonEtco/create-an-issue@v2
+        # We need to pass in a GITHUB_TOKEN env var for this to work
+        # secrets.GITHUB_TOKEN is populated with a new token at the start of a workflows run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.actor }}
+        with:
+          filename: .github/deploy_issue_template.md
+          assignees: ${{ github.actor }}
+          update_existing: false
 
   close-issue:
     name: Close Issue
@@ -49,7 +58,7 @@ jobs:
     # Only if the deployment was a success, should we then close the issue
     if: ${{ success() }}
     steps:
-      - run: gh issue close --comment "Deployment successful." --reason "completed" "${{ needs.open-start-issue.outputs.issue-number }}"
+      - run: gh issue close --comment "Deployment successful." --reason "completed" "${{ needs.open-issue.outputs.issue-number }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
