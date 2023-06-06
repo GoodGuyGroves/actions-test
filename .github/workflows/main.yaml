@@ -48,7 +48,7 @@ jobs:
           OWNER: ${{ github.actor }}
         with:
           filename: .github/deploy_issue_template.md
-          assignees: ${{ github.actor }}
+          # assignees: ${{ github.actor }}
           update_existing: false
           search_existing: open
 
