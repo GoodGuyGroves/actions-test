@@ -1,0 +1,79 @@
+name: "Deploy to Production"
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - "main"
+  # This allows us to manually trigger this workflow
+  workflow_dispatch:
+    inputs:
+      # We can choose if we want to deploy a different branch to our environment
+      branch:
+        description: "The branch to checkout"
+        required: true
+        type: string
+      # This allows us to deploy to an environment other than production - so we can test prod deploy in another env
+      environment:
+        description: "The environment to deploy to"
+        required: true
+        type: choice
+        options:
+        - production
+        - staging
+        - development
+      # I am just testing this
+      target-env:
+        type: environment
+        required: true
+
+jobs:
+  open-issue:
+    name: Create Issue
+    runs-on: ubuntu-latest
+    outputs:
+      issue-number: ${{ steps.open-issue.outputs.number }}
+    steps:
+      # Using this action allows us to make use of an issue template
+      - id: open-issue
+        uses: JasonEtco/create-an-issue@v2
+        # We need to pass in a GITHUB_TOKEN env var for this to work
+        # secrets.GITHUB_TOKEN is populated with a new token at the start of a workflows run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.actor }}
+        with:
+          filename: .github/deploy_issue_template.md
+          assignees: ${{ github.actor }}
+          update_existing: false
+          search_existing: open
+
+  close-issue:
+    name: Close Issue
+    runs-on: ubuntu-latest
+    # Only if the deployment was a success, should we then close the issue
+    if: ${{ success() }}
+    steps:
+      - run: gh issue close --comment "Deployment successful." --reason "completed" "${{ needs.open-start-issue.outputs.issue-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # To experiment with
+  notify:
+    name: Slack Message
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout-action
+        uses: actions/checkout@v3
+        with:
+          repository: <my-slack-action>
+          path: <my-path> | ./github/actions/
+      - id: send-success-message
+        if: ${{ success() }}
+        uses: ./github/actions/slack-message/
+      - id: send-failure-message
+        if: ${{ failure() }}
+        uses: ./github/actions/slack-message/
