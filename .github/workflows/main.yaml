@@ -38,15 +38,9 @@ jobs:
       issue-number: ${{ steps.open-issue.outputs.number }}
     steps:
       - uses: actions/checkout@v3
-      # Using this action allows us to make use of an issue template
-      - id: open-issue
-        uses: JasonEtco/create-an-issue@v2
-        # We need to pass in a GITHUB_TOKEN env var for this to work
-        # secrets.GITHUB_TOKEN is populated with a new token at the start of a workflows run
+      - uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          update_existing: false
 
   close-issue:
     name: Close Issue
